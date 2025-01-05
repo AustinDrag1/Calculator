@@ -3,26 +3,25 @@ let x = "";
 let y = "";
 let op = null;
 
-// Calculator
+// Elements
 const calculator = document.querySelector("#calculator");
 const screen = document.querySelector(".screen");
-const resetAllBtn = document.querySelector("#AC");
 
+// Event Listeners
 calculator.addEventListener("click", (e) => click(e) );
-resetAllBtn.addEventListener("click", () => resetAll() );
 
-// Checks that click is an acceptable target then delegates what should happen
+// Delegates what should happen based on click target
 function click(e)
 {
     let selection = e.target.innerText;
 
-    // Number or "." clicked: concat if enough space
+    // Number or decimal clicked: concat if enough space
     if( e.target.className.includes("num") )
     {
         // Ignore: 10th digit
-        if( screen.innerText.length === 9 ) return;
+        if( screen.innerText.length > 8 ) return;
 
-        // Ignore: second "."
+        // Ignore: second decimal
         if( selection === "." && screen.innerText.includes(".") ) return;
         
         // Add digit
@@ -37,41 +36,65 @@ function click(e)
             screen.innerText = y;
         }
     }
-    else // Operator clicked: calculate if in correct state
+    else
     {
-        // State irrelevant
+        // Perform operation
         if( selection === "+/-" ) flipSign();
+        if( selection === "AC" ) resetAll();
         if( selection === "=" ) operate();
+        if( ["+","-","/","*"].includes(selection) )
+        {
+            op = selection;
 
-        // Requires first state
-
-        // Requires second state
+            // If we already picked an operator and Y value, treat new operators as "="
+            if( !takingX )
+            {
+                operate();
+                op = null;
+            }
+            else
+            {
+                takingX = false;
+            }
+        }
     }
+
+    // console.log("===");
+    // console.log(x + " " + op + " " + y);
 }
 
-function add(x,y) { return x+y; }
+function add(x,y) { return Number(x) + Number(y); }
 function subtract(x,y) { return x-y; }
 function multiply(x,y) { return x*y; }
 function divide(x,y) { return x/y; }
 
-function operate(x,y,op)
+function operate()
 {
     let result = 0;
 
     // Validate we're ready to calculate
-    if( x === null || y === null || op == null ) return;
+    if( x === null || y === null || op === null ) return;
 
-    // Send to appropriate method
-    switch (op)
+    console.log(x + " " + op + " " + y);
+
+    // Calculate
+    if( op === "+" ) result = add(x,y);
+    else if( op === "-" ) result = subtract(x,y);
+    else if( op === "*" ) result = multiply(x,y);
+    else if( op === "/" ) result = divide(x,y);
+
+    // Discard big large numbers
+    if( result > 999999999 )
     {
-        case "+": result = add(x,y); break;
-        case "-": result = subtract(x,y); break;
-        case "*": result = multiply(x,y); break;
-        case "/": result = divide(x,y); break;
+        resetAll()
     }
 
-    // Round to fit screen
-
+    // Set values
+    x = String(result);
+    y = ""
+    screen.innerText = result;
+    op = null;
+    takingX = true;
 }
 
 function resetAll()
