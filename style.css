@@ -1,0 +1,65 @@
+html, body {
+    height: 100%;
+}
+
+body {
+    margin: 0px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: darkslategray;
+}
+
+#calculator {
+    display: flex;
+    flex-flow: row wrap;
+    justify-content: space-evenly;
+    flex-basis: 400px;
+    height: 600px;
+    
+    background-color: royalblue;
+    border: 2px solid black;
+    padding: 5px;
+}
+
+.screen {
+    background-color: lightgray;
+    flex-basis: 380px;
+    /*align-self: center;*/
+
+    font-size: 54pt;
+    line-height: 0;
+    text-align: right;
+
+    margin: 5px;
+    border: 2px solid black;
+    padding: 35px 15px 0px 15px;
+}
+
+.btn {
+    border: 2px solid black;
+    flex-basis: 86px;
+    flex-grow: 1;
+    margin: 5px;
+    font-size: 32pt;
+}
+
+.screen p {
+    margin: 0px;
+}
+
+.btn:hover {
+    opacity: 80%;
+}
+
+.btn.num {
+    background-color: gray;
+}
+
+.btn.operator {
+    background-color: orange;
+}
+
+.btn.zero {
+    flex-basis: 186px;
+}
