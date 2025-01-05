@@ -58,9 +58,6 @@ function click(e)
             }
         }
     }
-
-    // console.log("===");
-    // console.log(x + " " + op + " " + y);
 }
 
 function add(x,y) { return Number(x) + Number(y); }
@@ -74,8 +71,6 @@ function operate()
 
     // Validate we're ready to calculate
     if( x === null || y === null || op === null ) return;
-
-    console.log(x + " " + op + " " + y);
 
     // Calculate
     if( op === "+" ) result = add(x,y);
@@ -91,8 +86,8 @@ function operate()
 
     // Set values
     x = String(result);
-    y = ""
     screen.innerText = result;
+    y = "";
     op = null;
     takingX = true;
 }
