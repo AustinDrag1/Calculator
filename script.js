@@ -10,16 +10,33 @@ const screen = document.querySelector(".screen");
 // Event Listeners
 calculator.addEventListener("click", (e) => click(e) );
 
+function show()
+{
+    console.log("===");
+    console.log(x);
+    console.log(y);
+    console.log(op);
+    console.log(takingX);
+}
+
 // Delegates what should happen based on click target
 function click(e)
 {
     let selection = e.target.innerText;
 
+    // Clear error text
+    if( ["NaN","Can't / 0","Too big"].includes(screen.innerText) )
+    {
+        screen.innerText = "";
+    }
+
     // Number or decimal clicked: concat if enough space
     if( e.target.className.includes("num") )
     {
+        let reset = false;
+
         // Ignore: 10th digit
-        if( screen.innerText.length > 8 ) return;
+        if( screen.innerText.length > 8 ) reset = true;
 
         // Ignore: second decimal
         if( selection === "." && screen.innerText.includes(".") ) return;
@@ -27,12 +44,12 @@ function click(e)
         // Add digit
         if( takingX )
         {
-            x = x + selection;
+            x = reset ? selection : x + selection;
             screen.innerText = x;
         }
         else
         {
-            y = y + selection;
+            y = reset ? selection : y + selection;
             screen.innerText = y;
         }
     }
@@ -52,7 +69,7 @@ function click(e)
                 operate();
                 op = null;
             }
-            else
+            else if( x !== "")
             {
                 takingX = false;
             }
@@ -63,7 +80,7 @@ function click(e)
 function add(x,y) { return Number(x) + Number(y); }
 function subtract(x,y) { return x-y; }
 function multiply(x,y) { return x*y; }
-function divide(x,y) { return x/y; }
+function divide(x,y) { if(y == 0) return "Can't / 0"; else return x/y; }
 
 function operate()
 {
@@ -78,13 +95,35 @@ function operate()
     else if( op === "*" ) result = multiply(x,y);
     else if( op === "/" ) result = divide(x,y);
 
-    // Discard big large numbers
-    if( result > 999999999 )
+    // Errors
+    if( ["NaN","Can't / 0","Too big"].includes(result) )
     {
-        resetAll()
+        resetAll();
+        screen.innerText = result;
+        return;
+    }
+    
+    // Validate size
+    let integer = parseInt(result);
+    let integerLength = String(Math.abs(integer)).length;
+
+    if( integerLength > 9 )
+    {
+        // Number too big
+        resetAll();
+        return;
+    }
+    else if( String(Math.abs(result)).length > 9 )
+    {
+        // Round to fit
+        let neg = result < 0;
+        let resultStr = String(Math.abs(result)).slice(0,10);
+        console.log(resultStr);
+
+        result = Number(resultStr);
     }
 
-    // Set values
+    // Set state
     x = String(result);
     screen.innerText = result;
     y = "";
